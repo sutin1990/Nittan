@@ -1,0 +1,122 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .dx-datagrid .dx-link {
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .dx-icon-trash {
+        font-size: 18px;
+    }
+</style><div id="GrdUserTran"></div>
+<script>
+    function moveEditColumnToLeft(dataGrid) {
+        dataGrid.columnOption("command:edit", {
+            visibleIndex: -1
+        });
+    }
+    $("#GrdUserTran").dxDataGrid({
+        dataSource: DevExpress.data.AspNet.createStore({
+            key: "ID",
+            loadUrl: "api/ManageUserTransaction/GetUser",    
+            onBeforeSend: function (method, ajaxOptions) {
+                ajaxOptions.xhrFields = { withCredentials: true };
+            }
+        }), filterRow: {
+            visible: true
+        },
+        selection: {
+            mode: "multiple",
+            selectAllMode: "page",
+            recursive: false,
+            showCheckBoxesInMultipleMode: 'none'
+        },
+        headerFilter: {
+            visible: true
+        },
+        "export": {
+            enabled: true,
+            fileName: "Usertran",
+            allowExportSelectedData: true
+        },
+        loadPanel: false,
+        remoteOperations: true,
+        showColumnLines: true,
+        showRowLines: true,
+        rowAlternationEnabled: true,
+        showBorders: true,
+        allowColumnReordering: true,
+        allowColumnResizing: true,
+        columnAutoWidth: true,
+        showBorders: true,
+        columnHidingEnabled: true,
+        searchPanel: {
+            visible: true
+        },
+        paging: {
+            pageSize: 10
+        },
+        pager: {
+            showPageSizeSelector: true,
+            allowedPageSizes: [10, 25, 50, 100],
+            showInfo: true,
+            showNavigationButtons: true,
+            visible: true
+        },
+        columnChooser: {
+            enabled: true,
+            mode: "DragAndDrop"
+        },
+        columns: [{
+            caption: "Manage",
+            alignment: "center",
+            width: 50,
+            maxwidth: 50,
+            cellTemplate: function (container, options) {
+                $('<a/>').addClass('dx-link dx-link-trash dx-icon-trash text-center')
+                    .on('dxclick', function () {
+                        $.ajax({
+                            url: "api/ManageUserTransaction/Delete?options=" + options.data.ID,
+                            type: "Delete",
+                            //data: options,
+                            contentType: "application/json; charset=utf-8",
+                            success: function (response) {
+                                $("#GrdUserTran").dxDataGrid("instance").refresh();
+                            },
+                            error: function () {
+                                $("#StorageLocations").empty();
+                            }
+                        });
+                        //(options.data.UserName);
+                    })
+                    .appendTo(container);
+            }
+
+        },{
+            dataField: "ID",
+            caption: "ID",
+            //width: "10%"
+        },{
+            dataField: "UserName",
+            caption: "UserName.",
+            //width: "10%"
+        },
+        {
+            dataField: "DateExprie",
+            caption: "DateExprie.",
+            dataType: 'date',
+                    format: "@ViewBag.format",
+                    editorOptions: {
+                        showClearButton: true
+                    }
+            //width: "5%"
+        }
+        ], onContentReady: function (e) {
+            e.component.columnOption("command:edit", "visibleIndex", -1);
+        }
+    });
+</script>
