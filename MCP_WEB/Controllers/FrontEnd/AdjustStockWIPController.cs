@@ -22,7 +22,7 @@ namespace MCP_WEB.Controllers.FrontEnd
             IEnumerable<Claim> claims = identity.Claims;
             var c = claims.FirstOrDefault();
             ViewBag.UserName = c.Value;
-
+            //xxx
             //Get datetime format
             var p = _context.s_GlobalPams.SingleOrDefault(x => x.parm_key == "DateTimeFormat");
             ViewBag.GlobalDtFormat = p.param_value;
